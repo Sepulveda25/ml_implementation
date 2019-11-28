@@ -1,0 +1,22 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "test-topic:1:1"
+      KAFKA_MESSAGE_MAX_BYTES: 30000000
+      KAFKA_MAX_MESSAGE_BYTES: 30000000
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 30000000
+      KAFKA_MAX_REQUEST_SIZE: 30000000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./consumer.properties:/opt/kafka/config/consumer.properties
+      - ./producer.properties:/opt/kafka/config/producer.properties
