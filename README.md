@@ -33,7 +33,6 @@ Puede instalar las dependencias utilizando los siguientes comandos:
 sudo apt-get install python3-pip
 sudo apt-get install tcpdump
 sudo apt-get install libpcap-dev
-sudo apt-get install inotify-tools
 sudo apt-get install python3-venv
 
 sudo apt-get install \
@@ -42,4 +41,34 @@ sudo apt-get install \
     curl \
     gnupg2 \
     software-properties-common
+    
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo apt install default-jre
+sudo apt install default-jdk
 ```
+
+Una vez instaladas las dependencias, es necesario crear y activar un entorno virtual de Python:
+
+```bash
+python3 -m venv <NombreDelEntornoVirtual>
+source /<NombreDelEntornoVirtual>/bin/activate
+```
+
+Por ultimo, es necesario instalar las dependencias de Python, que se encuentran en el archivo requerimientos.txt:
+
+```bash
+sudo pip3 install -r requerimientos.txt
+```
+
+## 2. Despliegue
+
