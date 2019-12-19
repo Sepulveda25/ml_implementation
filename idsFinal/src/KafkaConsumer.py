@@ -6,15 +6,6 @@ import datetime
 from kafka import KafkaConsumer
 from sklearn import preprocessing
 
-# CICFlowmeter 4
-"""features=["Fwd Packet Length Max", "Fwd Packet Length Std", "Flow IAT Std", "Flow IAT Min", "Flow Duration", "Fwd IAT Total", 
-    "Flow IAT Max", "Total Length of Fwd Packets", "Flow IAT Mean", "Flow Bytes/s", "Fwd Packet Length Mean", 
-   "Bwd Packet Length Max", "Total Length of Bwd Packets"]"""
-
-# CICFlowmeter 3
-"""features = ["Fwd Pkt Len Max", "Fwd Pkt Len Std", "Flow IAT Std", "Flow IAT Min", "Flow Duration", "Fwd IAT Tot", "Flow IAT Max", 
-    "TotLen Fwd Pkts", "Flow IAT Mean", "Flow Byts/s", "Fwd Pkt Len Mean", "Bwd Pkt Len Max", "TotLen Bwd Pkts"]"""
-
 # Nuevo dataset
 """features = ["Tot Bwd Pkts", "Fwd Pkt Len Min", "Flow Duration", "Fwd Pkt Len Std", "Flow IAT Std", "Bwd Pkt Len Std", "Fwd Pkt Len Max",
     "Flow IAT Max", "Flow Pkts/s", "Flow IAT Min", "TotLen Fwd Pkts", "Bwd Pkt Len Max", "Fwd IAT Tot", "Flow Byts/s"]"""
@@ -42,36 +33,11 @@ aBorrar = []
 class Consumer(object):
 
     def __init__(self):
-        """__init__ method for first initialization from config"""
+
         self.cur_path = os.path.dirname(__file__)
-        self.outputDir = os.path.relpath('../resources/model_resources',
-                                         self.cur_path)
-        self.blackList = os.path.relpath(
-            '../resources/black_list/black_list.txt', self.cur_path)
 
 #        logging.basicConfig(format='%(asctime)s %(iporigen)s %(ipdestino)s %(ataque)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename = "alert.log")
-        self.log = open("alert.log", "a")
-
-    def make_prediction(self, model, dataframe):
-        """make_prediction func for make prediction
-
-        :param model - numeral network model:
-        :param dataframe - data from kafka broker:"""
-        print("---------------")
-
-        dataset = dataframe.sample(frac=1).values # Sample devuelve una parte de las muestras (como frac=1 devuelve 100%) en orden aleatorio
-        #  values deveulve una representacion en numpy del dataframe
-
-        X_processed = np.delete(dataset, [0, 1, 3, 6], 1).astype('float32')
-
-        X_data = np.reshape(X_processed,
-                            (X_processed.shape[0], X_processed.shape[1], 1))
-
-        classes = model.predict(X_data, batch_size=1)
-        classes = classes.reshape(-1)
-        dataset[..., self.number_features] = classes
-
-        self.check_and_add_to_blacklist(dataset)
+        self.log = open("/home/debianml/idsFinal/alert.log", "a")
 
     def hacer_prediccion(self, model, dataframe):
 
@@ -83,17 +49,17 @@ class Consumer(object):
         dfCompleto = pd.DataFrame(dataframe)
         df = df.loc[:, features]
         df = df.fillna(0)
-        #print(df)
 
-#        df["Flow Byts/s"]=df["Flow Byts/s"].replace('Infinity', -1)
-#        number_list=[]
-#        for j in df["Flow Byts/s"]:
-#            try:
-#                num=int(float(j))
-#                number_list.append(int(num))
-#            except:
-#                number_list.append(j)
-#        df["Flow Byts/s"]=number_list
+#        Descomentar si Flow Byts esta en la lista de features
+        """df["Flow Byts/s"]=df["Flow Byts/s"].replace('Infinity', -1)
+        number_list=[]
+        for j in df["Flow Byts/s"]:
+            try:
+                num=int(float(j))
+                number_list.append(int(num))
+            except:
+                number_list.append(j)
+        df["Flow Byts/s"]=number_list"""
 
         string_features=[]
         for k in features:
@@ -112,10 +78,10 @@ class Consumer(object):
 #        print(dfCompleto)
 
         """if no_existe:
-            dfCompleto.to_csv('Pos.csv' ,index = False)
+            dfCompleto.to_csv('Pues.csv' ,index = False)
             no_existe=False
         else:
-            dfCompleto.to_csv('Pos.csv' ,index = False, header=False,mode="a")"""
+            dfCompleto.to_csv('Pues.csv' ,index = False, header=False,mode="a")"""
 
         self.emitir_alerta(dfCompleto)
 
@@ -163,21 +129,21 @@ class Consumer(object):
                 print ("Ataque de ESCANEO DE PUERTOS detectado desde la IP " + IPS[0] + " a la IP " + IPS[1]+ "\n")
 #                logging.warning("Ataque de ESCANEO DE PUERTOS detectado desde la IP " + IPS[0] + " a la IP " + IPS[1]+ "\n")
                 self.log.write(str(datetime.datetime.now().isoformat()) + " " + IPS[0] + " " + IPS[1] + " Priority: 1" + " - TCP - " + "[Port Scan] detectado \n")
-
         for ID, frec in sqlDicc.items():
-            if (frec > 20):
+            if (frec > 1):
                 IPS = ID.split('-')
                 print ("Ataque de INYECCION SQL detectado desde la IP " + IPS[0] + " a la IP " + IPS[1]+ "\n")
-
+                self.log.write(str(datetime.datetime.now().isoformat()) + " " + IPS[0] + " " + IPS[1] + " Priority: 1" + " - TCP - " + "[SQL Injection] detectado \n")
         for ID, frec in sshDicc.items():
-            if (frec > 30):
+            if (frec > 1):
                 IPS = ID.split('-')
                 print ("Ataque de FUERZA BRUTA DE ACCESO SSH detectado desde la IP " + IPS[0] + " a la IP " + IPS[1]+ "\n")
-
+                self.log.write(str(datetime.datetime.now().isoformat()) + " " + IPS[0] + " " + IPS[1] + " Priority: 1" + " - TCP - " + "[SSH Fuerza bruta] detectado \n")
         for ID, frec in dosDicc.items():
-            if (frec > 30):
+            if (frec > 1):
                 IPS = ID.split('-')
                 print ("Ataque de DENEGACION DE SERVICIO detectado desde la IP " + IPS[0] + " a la IP " + IPS[1]+ "\n")
+                self.log.write(str(datetime.datetime.now().isoformat()) + " " + IPS[0] + " " + IPS[1] + " Priority: 1" + " - TCP - " + "[Ataque DoS] detectado \n")
 
 #        print ("New psList: " + str(len(newpsList)) + " psList: " + str(len(psList)) + "\n")
 #        print ("New sqlList: " + str(len(newsqlList)) + " sqlList: " + str(len(sqlList)) + "\n")
@@ -195,29 +161,14 @@ class Consumer(object):
             aBorrar = [len(newpsList), len(newsqlList), len(newsshList), len(newdosList)]
 
 
-    def check_and_add_to_blacklist(self, dataset):
-        """check_and_add_to_blacklist func to finds hacker's
-        ip from prediction by neural network.
-        :param dataset - data after prediction:
-        """
-        self.black_list = list(
-            set([
-                x[0] for x in dataset[:, [1, self.number_features]]
-                if x[1] >= .5
-            ]))
-        print(self.black_list)
-        with open(self.blackList, 'w') as f:
-            for ip in self.black_list:
-                f.write("%s\n" % ip)
-
     def kafka_setup(self):
-        """kafka_setup func to setup up message broker for receives data"""
-        # To consume latest messages and auto-commit offsets
+
+        # Se conecta a test-topic
         consumer = KafkaConsumer('test-topic',
                                  group_id='test-consumer',
                                  bootstrap_servers=['kafka:9092'])
 
-        filename = "/home/debianml/idsFinal/modelo_final.sav"
+        filename = "/home/debianml/idsFinal/modelo_ultimo_newfeatures.sav"
         model = pickle.load(open(filename, 'rb'))
 
         for message in consumer:

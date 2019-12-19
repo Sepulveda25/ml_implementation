@@ -12,10 +12,6 @@ from sklearn.metrics import confusion_matrix
 import itertools
 
 
-# Viejo dataset
-"""features = ["Fwd Pkt Len Max", "Fwd Pkt Len Std", "Flow IAT Std", "Flow IAT Min", "Flow Duration", "Fwd IAT Tot", "Flow IAT Max", 
-    "TotLen Fwd Pkts", "Flow IAT Mean", "Flow Byts/s", "Fwd Pkt Len Mean", "Bwd Pkt Len Max", "TotLen Bwd Pkts"]"""
-
 # Nuevo dataset
 """features = ["Tot Bwd Pkts", "Fwd Pkt Len Min", "Flow Duration", "Fwd Pkt Len Std", "Flow IAT Std", "Bwd Pkt Len Std", "Fwd Pkt Len Max",
     "Flow IAT Max", "Flow Pkts/s", "Flow IAT Min", "TotLen Fwd Pkts", "Bwd Pkt Len Max", "Fwd IAT Tot", "Flow Byts/s"]"""
@@ -91,31 +87,7 @@ class Consumer(object):
     def __init__(self):
         """__init__ method for first initialization from config"""
         self.cur_path = os.path.dirname(__file__)
-        self.outputDir = os.path.relpath('../resources/model_resources',
-                                         self.cur_path)
-        self.blackList = os.path.relpath(
-            '../resources/black_list/black_list.txt', self.cur_path)
 
-
-    def make_prediction(self, model, dataframe):
-        """make_prediction func for make prediction
-        :param model - numeral network model:
-        :param dataframe - data from kafka broker:"""
-        print("---------------")
-
-        dataset = dataframe.sample(frac=1).values # Sample devuelve una parte de las muestras (como frac=1 devuelve 100%) en orden aleatorio
-        #  values deveulve una representacion en numpy del dataframe
-
-        X_processed = np.delete(dataset, [0, 1, 3, 6], 1).astype('float32')
-
-        X_data = np.reshape(X_processed,
-                            (X_processed.shape[0], X_processed.shape[1], 1))
-
-        classes = model.predict(X_data, batch_size=1)
-        classes = classes.reshape(-1)
-        dataset[..., self.number_features] = classes
-
-        self.check_and_add_to_blacklist(dataset)
 
     def hacer_prediccion(self, model, dataframe):
 
@@ -127,7 +99,6 @@ class Consumer(object):
         dfCompleto = pd.DataFrame(dataframe)
         df = df.loc[:, features]
         df = df.fillna(0)
-        #print(df)
 
 #        df["Flow Byts/s"]=df["Flow Byts/s"].replace('Infinity', -1)
 #        number_list=[]
@@ -167,20 +138,6 @@ class Consumer(object):
         cm = confusion_matrix(y, predict)
         plot_confusion_matrix(cm, y_labels, "Matriz de confusion del modelo")
 
-    def check_and_add_to_blacklist(self, dataset):
-        """check_and_add_to_blacklist func to finds hacker's
-        ip from prediction by neural network.
-        :param dataset - data after prediction:
-        """
-        self.black_list = list(
-            set([
-                x[0] for x in dataset[:, [1, self.number_features]]
-                if x[1] >= .5
-            ]))
-        print(self.black_list)
-        with open(self.blackList, 'w') as f:
-            for ip in self.black_list:
-                f.write("%s\n" % ip)
 
     def kafka_setup(self):
         """kafka_setup func to setup up message broker for receives data"""

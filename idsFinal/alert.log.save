@@ -1,0 +1,29 @@
+019-11-06T15:26:17.945443 172.16.81.6 200.16.25.1 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T15:26:37.980692 172.23.16.181 172.28.86.201 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T15:26:37.980716 172.28.85.125 200.16.16.171 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T15:26:47.938197 172.28.85.125 200.16.16.171 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T15:26:47.938222 172.23.16.181 172.28.86.201 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T16:02:51.491422 172.16.81.6 200.16.25.1 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T16:03:32.100793 172.217.162.1 172.28.94.226 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T16:03:51.471369 172.217.162.1 172.28.94.226 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T16:04:52.344677 172.28.83.83 104.122.72.140 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-06T16:05:12.445936 172.28.83.83 104.122.72.140 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-20T10:47:04.209934 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-20T10:47:04.797424 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-20T10:50:44.729982 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-11-20T10:50:45.290661 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-12-10T14:55:32.369225 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-12-10T14:55:52.905111 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-12-11T14:22:01.264440 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-12-11T14:22:21.164986 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-12-11T14:24:31.273496 172.16.81.5 200.16.22.41 Priority: 1 - TCP - [SSH Fuerza bruta] detectado 
+2019-12-11T14:24:31.323917 172.16.81.5 200.16.22.41 Priority: 1 - TCP - [SSH Fuerza bruta] detectado 
+2019-12-11T15:04:22.795216 172.22.69.30 31.13.94.19 Priority: 1 - TCP - [SQL Injection] detectado 
+2019-12-11T15:04:24.829651 172.22.69.30 31.13.94.19 Priority: 1 - TCP - [SQL Injection] detectado 
+2019-12-11T15:04:27.490558 172.22.69.30 31.13.94.19 Priority: 1 - TCP - [SQL Injection] detectado 
+2019-12-11T15:49:52.739301 190.31.20.219 200.16.22.73 Priority: 1 - TCP - [SSH Fuerza bruta] detectado 
+2019-12-11T15:50:12.312717 172.23.16.116 200.16.22.74 Priority: 1 - TCP - [SQL Injection] detectado 
+2019-12-11T15:50:12.312739 190.31.20.219 200.16.22.73 Priority: 1 - TCP - [SSH Fuerza bruta] detectado 
+2019-12-11T15:50:32.284181 172.23.16.116 200.16.22.74 Priority: 1 - TCP - [SQL Injection] detectado 
+2019-12-13T16:09:40.366962 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 
+2019-12-13T16:10:00.895356 172.16.81.6 200.16.22.73 Priority: 1 - TCP - [Port Scan] detectado 

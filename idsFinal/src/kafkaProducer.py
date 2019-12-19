@@ -8,7 +8,6 @@ from kafka import KafkaClient, KafkaProducer
 
 
 class DataLoader(object):
-    """DataLoader class for loads data to kafka"""
 
     def __init__(self):
 
@@ -19,9 +18,7 @@ class DataLoader(object):
         self.TOPIC = 'test-topic'
 
     def read_data_from_csv(self, csv_file):
-        """read_data_from_csv func for reads and makes data from csv
-        file, which gets from cicflowmeter
-        :param csv_file: """
+
         dataframe = pandas.read_csv(csv_file)
         try:
             byte_array = pickle.dumps(dataframe)
@@ -38,7 +35,7 @@ if __name__ == '__main__':
     try:
         x_file = open(path)
     except IOError:
-        print("Could not read file")
+        print("No se pudo leer el archivo")
         sys.exit()
 
     producer.read_data_from_csv(x_file)
