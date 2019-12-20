@@ -4,6 +4,10 @@
 
 En el siguiente documento se detalla como instalar y poner en funcionamiento el Sistema de Detecciones de Intrusiones implementado con tecnicas de Machine Learning.
 
+## Arquitectura del sistema
+
+![](imagenes/Arquitectura_IDS_ML.png)
+
 ## 1. Requerimientos
 
 Se detallan los requisitos necesarios para la instalacion del sistema.
@@ -97,32 +101,26 @@ echo 127.0.1.1 kafka >> /etc/hosts
 
 ## 3. Puesta en marcha
 
-En primer lugar, se necesita crear los contenedores Docker de Kafka:
+Antes de poner el sistema en funcionamiento, se necesita crear los contenedores Docker de Kafka:
 
 ```bash
 sudo ./run_compose.sh
 ```
 
-Luego, hay que habilitar la captura de paquetes de red en la interfaz que vamos a monitorear:
+Luego, simplemente debe se debe ejecutar el script **start** que se encarga de ejecutar todos los archivos necesarios para el funcionamiento del sistema:
 
 ```bash
-cd tcpdump_and_cicflowmeter 
-sudo ./capture_interface_pcap.sh <Interfaz> pcap
+./start.sh
 ```
 
-En otra ventana, debe recoger los paquetes capturados y enviarlos al productor de Kafka. Para hacerlo, debe activar el entorno virtual de Python en la nueva ventana.
+Para detener los procesos, simplemente se cancela el proceso en primer plano con **Ctrl + C** y luego ejecutar el script **stop**:
 
 ```bash
-source /<NombreDelEntornoVirtual>/bin/activate
-./pickup_csv_files.sh csv/
+./stop.sh
 ```
 
-Por ultimo, en otra ventana debe habilitar el consumidor de Kafka.
+No es necesario ejecutar los script con permisos de superusuario.
 
-```bash
-cd src
-python3 KafkaConsumer.py
-```
 
 Con esto, el programa queda en funcionamiento. Las alertas de ataque se guardan en el archivo **alert.log** en la carpeta **src**.
 
@@ -155,4 +153,32 @@ output.logstash:
   index: filebeat
 ```
 Si se utiliza el servidor master actual (el 172.16.81.50), no necesita realizar ninguna configuracion extra. En caso de querer utilizar un nuevo servidor master, debe configurar los filtros de logstash para que pueda leer las nuevas alertas de nuestro IDS.
+Para mas informacion sobre como editar los filtros de logstash, puede ver:
+
+[Guia de administracion de logstash](https://gitlab.unc.edu.ar/csirt/csirt-docs/blob/master/security-onion/master/logstash/master-logstash-guide.md)
+
+Se debe realizar la siguiente configuracion en el archivo **9500_output_beats_custom.conf:**
+
+```bash
+filter {
+    grok {
+      match => {"message" => "%{TIMESTAMP_ISO8601:timestamp} %{IP:source_ip} %    {IP:destination_ip} Priority: %{NUMBER:priority} - %{WORD:protocol} - \[%{DATA:attack}\]"}
+  }
+}
+
+output {
+  if "beat" in [tags] {
+    elasticsearch {
+      hosts => elasticsearch
+      index => "logstash-beats-%{+YYYY.MM.dd}"
+      template_name => "logstash-beats"
+      template => "/beats-template.json"
+      template_overwrite => true
+    }
+  }
+}
+```
+
+
+
 
